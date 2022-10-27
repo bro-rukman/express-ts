@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
+import UserRoutes from './routes/UserRoutes';
 
 class App {
   public app: Application;
@@ -21,11 +22,9 @@ class App {
   }
   protected routes(): void {
     this.app.route('/').get((req: Request, res: Response) => {
-      res.send('Routing use TS');
+      res.send('This is default path');
     });
-    this.app.route('/request').post((req: Request, res: Response) => {
-      res.send(req.body);
-    });
+    this.app.use('/api/v1/user', UserRoutes);
   }
 }
 const port: number = 8000;
