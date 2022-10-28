@@ -1,15 +1,10 @@
-import { Router, Response, Request } from 'express';
-import IRoute from './RouteInterface';
 import UserController from '../controllers/UserController';
+import BaseRouter from './BaseRoutes';
+import { auth } from '../middlewares/AuthMiddleware';
 
-class UserRouter implements IRoute {
-  public router: Router;
-  constructor() {
-    this.router = Router();
-    this.routes();
-  }
+class UserRouter extends BaseRouter {
   public routes(): void {
-    this.router.get('/', UserController.getAll);
+    this.router.get('/', auth, UserController.getAll);
     this.router.post('/create', UserController.create);
     this.router.get('/:id', UserController.getById);
     this.router.put('/update/:id', UserController.updateById);

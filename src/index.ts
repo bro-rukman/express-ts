@@ -5,6 +5,8 @@ import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
 import UserRoutes from './routes/UserRoutes';
+import { config as dotenv } from 'dotenv';
+import AuthRoutes from './routes/AuthRoutes';
 
 class App {
   public app: Application;
@@ -12,6 +14,7 @@ class App {
     this.app = express();
     this.plugins();
     this.routes();
+    dotenv();
   }
   protected plugins(): void {
     this.app.use(bodyParser.json());
@@ -25,9 +28,10 @@ class App {
       res.send('This is default path');
     });
     this.app.use('/api/v1/user', UserRoutes);
+    this.app.use('/api/v1/auth', AuthRoutes);
   }
 }
-const port: number = 8000;
+const port = 8000;
 const app = new App().app;
 app.listen(port, () => {
   console.log('Server running in port ' + port);

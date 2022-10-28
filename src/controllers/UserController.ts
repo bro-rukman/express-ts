@@ -16,6 +16,10 @@ const data: any[] = [
     nama: 'Endang',
     email: 'endang@gmail.com',
   },
+  {
+    id: 4,
+    nama: 'Kamidi',
+  },
 ];
 class UserController implements IController {
   getAll(req: Request, res: Response): Response {
@@ -23,10 +27,9 @@ class UserController implements IController {
   }
   create(req: Request, res: Response): Response {
     const { id, name, email } = req.body;
-    // data.push({ id, name, email });
-    console.log(id, name, email);
-    if(!id && !name && !email){
-      return res.status(400).send("")
+    data.push({ id, name, email });
+    if (!id && !name && !email) {
+      return res.status(400).send('');
     }
     return res.send('success created an user');
   }
@@ -41,10 +44,26 @@ class UserController implements IController {
     }
   }
   updateById(req: Request, res: Response): Response {
-    throw new Error('Method not implemented.');
+    const { id } = req.params as { id: string };
+    const user = data.find(item => item.id === Number(id));
+    const { nama, email } = req.body;
+    user.nama = nama;
+    user.email = email;
+    if (!user) {
+      return res.status(404).send('User not found !');
+    } else {
+      return res.status(200).send('Success Update user !');
+    }
   }
   deleteById(req: Request, res: Response): Response {
-    throw new Error('Method not implemented.');
+    const { id } = req.params as { id: string };
+    const getUser = data.find(item => item.id === Number(id));
+    const user = data.filter(f => f.id !== Number(id));
+    if (!getUser) {
+      return res.status(404).send('User not found !');
+    } else {
+      return res.status(200).send(user);
+    }
   }
 }
 export default new UserController();

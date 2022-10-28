@@ -16,6 +16,10 @@ const data = [
         nama: 'Endang',
         email: 'endang@gmail.com',
     },
+    {
+        id: 4,
+        nama: 'Kamidi',
+    },
 ];
 class UserController {
     getAll(req, res) {
@@ -23,10 +27,9 @@ class UserController {
     }
     create(req, res) {
         const { id, name, email } = req.body;
-        // data.push({ id, name, email });
-        console.log(id, name, email);
+        data.push({ id, name, email });
         if (!id && !name && !email) {
-            return res.status(400).send("");
+            return res.status(400).send('');
         }
         return res.send('success created an user');
     }
@@ -41,10 +44,28 @@ class UserController {
         }
     }
     updateById(req, res) {
-        throw new Error('Method not implemented.');
+        const { id } = req.params;
+        const user = data.find(item => item.id === Number(id));
+        const { nama, email } = req.body;
+        user.nama = nama;
+        user.email = email;
+        if (!user) {
+            return res.status(404).send('User not found !');
+        }
+        else {
+            return res.status(200).send('Success Update user !');
+        }
     }
     deleteById(req, res) {
-        throw new Error('Method not implemented.');
+        const { id } = req.params;
+        const getUser = data.find(item => item.id === Number(id));
+        const user = data.filter(f => f.id !== Number(id));
+        if (!getUser) {
+            return res.status(404).send('User not found !');
+        }
+        else {
+            return res.status(200).send(user);
+        }
     }
 }
 exports.default = new UserController();
