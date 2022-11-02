@@ -19,6 +19,7 @@
     "@types/moment": "^2.13.0",
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.11.0",
+    "@types/validator": "^13.7.9",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "eslint": "^8.25.0",
@@ -45,6 +46,7 @@
     "mysql2": "^2.3.3",
     "pg-promise": "^10.12.1",
     "sequelize": "^6.25.3",
-    "sequelize-cli": "^6.5.2"
+    "sequelize-cli": "^6.5.2",
+    "validator": "^13.7.0"
   }
 }

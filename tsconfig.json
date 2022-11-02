@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2016",
+    "target": "es6",
     "esModuleInterop": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
@@ -10,6 +10,7 @@
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "allowJs": true,
     "resolveJsonModule": true,
     "paths": {
       "*": ["node_modules/*", "src/types/*"]

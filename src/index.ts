@@ -28,7 +28,7 @@ class App {
       res.send('This is default path');
     });
     this.app.use('/api/v1/user', UserRoutes);
-    this.app.use('/api/v1/auth', AuthRoutes);
+    // this.app.use('/api/v1/auth', AuthRoutes);
   }
 }
 const port = 8000;

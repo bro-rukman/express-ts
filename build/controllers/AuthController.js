@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const db = require('../db/models');
+const db = require('../db/models/user');
 class AuthController {
     constructor() {
         this.register = (req, res) => __awaiter(this, void 0, void 0, function* () {
