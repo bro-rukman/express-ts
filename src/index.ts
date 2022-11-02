@@ -28,7 +28,7 @@ class App {
       res.send('This is default path');
     });
     this.app.use('/api/v1/user', UserRoutes);
-    // this.app.use('/api/v1/auth', AuthRoutes);
+    this.app.use('/api/v1/auth', AuthRoutes);
   }
 }
 const port = 8000;
@@ -36,3 +36,9 @@ const app = new App().app;
 app.listen(port, () => {
   console.log('Server running in port ' + port);
 });
+//to initialize db models
+// ./node_modules/.bin/sequelize-cli init
+//to create model
+// ./node_modules/.bin/sequelize-cli model:generate --name user --attributes username:string,password:string,and so on --underscored
+//after create model
+// ./node_modules/.bin/sequelize-cli db:migrate

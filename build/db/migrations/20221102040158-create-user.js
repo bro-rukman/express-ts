@@ -17,22 +17,22 @@ module.exports = {
                     allowNull: false,
                     autoIncrement: true,
                     primaryKey: true,
-                    type: Sequelize.INTEGER,
+                    type: Sequelize.INTEGER
                 },
                 username: {
-                    type: Sequelize.STRING,
+                    type: Sequelize.STRING
                 },
                 password: {
-                    type: Sequelize.STRING,
+                    type: Sequelize.STRING
                 },
                 created_at: {
                     allowNull: false,
-                    type: Sequelize.DATE,
+                    type: Sequelize.DATE
                 },
                 updated_at: {
                     allowNull: false,
-                    type: Sequelize.DATE,
-                },
+                    type: Sequelize.DATE
+                }
             });
         });
     },
@@ -40,5 +40,5 @@ module.exports = {
         return __awaiter(this, void 0, void 0, function* () {
             yield queryInterface.dropTable('users');
         });
-    },
+    }
 };
