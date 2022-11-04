@@ -4,9 +4,10 @@ import morgan from 'morgan';
 import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
-import UserRoutes from './routes/UserRoutes';
 import { config as dotenv } from 'dotenv';
+import UserRoutes from './routes/UserRoutes';
 import AuthRoutes from './routes/AuthRoutes';
+import TodoRoutes from './routes/TodoRoutes';
 
 class App {
   public app: Application;
@@ -29,6 +30,7 @@ class App {
     });
     this.app.use('/api/v1/user', UserRoutes);
     this.app.use('/api/v1/auth', AuthRoutes);
+    this.app.use('/api/v1/todo', TodoRoutes);
   }
 }
 const port = 8000;

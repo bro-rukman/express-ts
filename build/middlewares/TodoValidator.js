@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_validator_1 = require("express-validator");
-const validateAuth = [
-    (0, express_validator_1.check)('username').isString(),
-    (0, express_validator_1.check)('password').isLength({ min: 5 }),
+const validateTodo = [
+    (0, express_validator_1.check)('description').isString().isLength({ min: 10 }),
     (req, res, next) => {
         const errors = (0, express_validator_1.validationResult)(req);
         if (!errors.isEmpty()) {
@@ -12,4 +11,4 @@ const validateAuth = [
         return next();
     },
 ];
-exports.default = validateAuth;
+exports.default = validateTodo;

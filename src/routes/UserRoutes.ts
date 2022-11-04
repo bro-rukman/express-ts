@@ -4,10 +4,9 @@ import { auth } from '../middlewares/AuthMiddleware';
 
 class UserRouter extends BaseRouter {
   public routes(): void {
-    this.router.get('/', auth, UserController.getAll);
-    this.router.post('/create', UserController.create);
+    this.router.get('/', UserController.getAll);
     this.router.get('/:id', UserController.getById);
-    this.router.put('/update/:id', UserController.updateById);
+    this.router.put('/update', auth, UserController.updateById);
     this.router.delete('/delete/:id', UserController.deleteById);
   }
 }

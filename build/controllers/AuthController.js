@@ -13,25 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../db/models');
-const HashPassword_1 = __importDefault(require("../utils/HashPassword"));
+const Authentication_1 = __importDefault(require("../utils/Authentication"));
 class AuthController {
     constructor() {
         this.register = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let { username, password } = req.body;
-            const passwordHashed = yield HashPassword_1.default.hash(password);
+            const passwordHashed = yield Authentication_1.default.passwordHash(password);
             yield db.user.create({
                 username,
                 password: passwordHashed,
             });
             return res.status(200).send('Created user succeeded !');
         });
-    }
-    login(req, res) {
-        const { username, password } = req.body;
-        if (!username && !password) {
-            return res.status(400).send('Wrong username or password !');
-        }
-        return res.send('Login Succeeded !');
+        this.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { username, password } = req.body;
+            const userFind = yield db.user.findOne({ where: { username } });
+            let result = yield Authentication_1.default.passwordCompare(password, userFind === null || userFind === void 0 ? void 0 : userFind.password);
+            if (result) {
+                let token = Authentication_1.default.generateToken(userFind.id, username, password);
+                return res.status(200).send({ username, token });
+            }
+            return res.send('Wrong username or password !');
+        });
+        this.profile = (req, res) => {
+            return res.send(req.app.locals.credential);
+        };
     }
 }
 exports.default = new AuthController();

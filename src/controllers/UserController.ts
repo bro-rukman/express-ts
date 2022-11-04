@@ -1,69 +1,44 @@
 import { Request, Response } from 'express';
-import IController from './ControllerInterface';
-const data: any[] = [
-  {
-    id: 1,
-    nama: 'Endang Rukmana',
-    email: 'e_rukmana@gmail.com',
-  },
-  {
-    id: 2,
-    nama: 'Rukmana',
-    email: 'rukmana@gmail.com',
-  },
-  {
-    id: 3,
-    nama: 'Endang',
-    email: 'endang@gmail.com',
-  },
-  {
-    id: 4,
-    nama: 'Kamidi',
-  },
-];
-class UserController implements IController {
-  getAll(req: Request, res: Response): Response {
-    return res.status(200).send(data);
-  }
-  create(req: Request, res: Response): Response {
-    const { id, name, email } = req.body;
-    data.push({ id, name, email });
-    if (!id && !name && !email) {
-      return res.status(400).send('');
-    }
-    return res.send('success created an user');
-  }
+const db = require('../db/models');
+class UserController {
+  getAll = async (req: Request, res: Response): Promise<Response> => {
+    const allUser = await db.user.findAll({ attributes: { exclude: ['password'] } });
+    return res.status(200).send({
+      data: allUser,
+    });
+  };
 
-  getById(req: Request, res: Response): Response {
+  getById = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params as { id: string };
-    const user = data.find(item => item.id === Number(id));
+    const user = await db.user.findOne({ where: { id }, attributes: { exclude: ['password'] } });
     if (!user) {
       return res.status(404).send('User not found !');
     } else {
-      return res.status(200).send(user);
+      return res.status(200).send({ data: user });
     }
-  }
-  updateById(req: Request, res: Response): Response {
+  };
+  updateById = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.app.locals.credential;
+    const { username, password } = req.body;
+    await db.user.update(
+      { username, password },
+      { where: { id }, attributes: { exclude: ['password'] } }
+    );
+    const getDataUpdate = await db.user.findOne({ where: { id }, attributes: { exclude: ['password'] } });
+    return res.status(200).send({
+      data: getDataUpdate,
+      message: 'Success Update user !',
+    });
+  };
+
+  deleteById = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params as { id: string };
-    const user = data.find(item => item.id === Number(id));
-    const { nama, email } = req.body;
-    user.nama = nama;
-    user.email = email;
+    const user = await db.user.findOne({ where: { id } });
     if (!user) {
-      return res.status(404).send('User not found !');
-    } else {
-      return res.status(200).send('Success Update user !');
+      return res.status(404).send({ message: 'User not found !' });
     }
-  }
-  deleteById(req: Request, res: Response): Response {
-    const { id } = req.params as { id: string };
-    const getUser = data.find(item => item.id === Number(id));
-    const user = data.filter(f => f.id !== Number(id));
-    if (!getUser) {
-      return res.status(404).send('User not found !');
-    } else {
-      return res.status(200).send(user);
-    }
-  }
+    await db.user.destroy({ where: { id } });
+    return res.status(200).send({ message: 'User successfully deleted !' });
+  };
 }
 export default new UserController();

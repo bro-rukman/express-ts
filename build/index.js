@@ -9,9 +9,10 @@ const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const compression_1 = __importDefault(require("compression"));
 const helmet_1 = __importDefault(require("helmet"));
-const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const dotenv_1 = require("dotenv");
+const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const AuthRoutes_1 = __importDefault(require("./routes/AuthRoutes"));
+const TodoRoutes_1 = __importDefault(require("./routes/TodoRoutes"));
 class App {
     constructor() {
         this.app = (0, express_1.default)();
@@ -32,6 +33,7 @@ class App {
         });
         this.app.use('/api/v1/user', UserRoutes_1.default);
         this.app.use('/api/v1/auth', AuthRoutes_1.default);
+        this.app.use('/api/v1/todo', TodoRoutes_1.default);
     }
 }
 const port = 8000;
