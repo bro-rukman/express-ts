@@ -1,24 +1,18 @@
 import { Request, Response } from 'express';
 import IController from './ControllerInterface';
 const db = require('../db/models');
+import TodoService from '../services/TodoService';
 class TodoController implements IController {
   getAll = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.app.locals.credential;
-    const data = await db.todo.findAll({
-      where: { user_id: id },
-      attributes: { exclude: ['userId'] },
-    });
+    const service: TodoService = new TodoService(req);
+    const data = await service.getAll();
     return res.status(200).send({
       data,
     });
   };
   create = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.app.locals.credential;
-    const { description } = req.body;
-    const todo = await db.todo.create({
-      user_id: id,
-      description,
-    });
+    const service: TodoService = new TodoService(req);
+    const todo = await service.createData();
     return res.status(201).send({
       data: todo,
       message: 'Create todo succeeded !',
@@ -26,12 +20,8 @@ class TodoController implements IController {
   };
 
   getById = async (req: Request, res: Response): Promise<Response> => {
-    const { id: user_id } = req.app.locals.credential;
-    const { id } = req.params as { id: string };
-    const data = await db.todo.findOne({
-      where: { id, user_id },
-      attributes: { exclude: ['userId'] },
-    });
+    const service: TodoService = new TodoService(req);
+    const data = await service.getDataById();
     if (!data) {
       return res.status(404).send({
         message: 'Todo not found !',
@@ -43,24 +33,21 @@ class TodoController implements IController {
     }
   };
   updateById = async (req: Request, res: Response): Promise<Response> => {
-    const { id: user_id } = req.app.locals.credential;
-    const { id } = req.params as { id: string };
-    const { description } = req.body;
-    await db.todo.update({ description }, { where: { id, user_id } });
-    const getDataUpdate = await db.todo.findOne({ where: { id, user_id }, attributes: { exclude: ['userId'] } });
+    const service: TodoService = new TodoService(req);
+    await service.updateDataById();
+    const getDataUpdate = await service.getDataById();
     return res.status(200).send({
       data: getDataUpdate,
       message: 'Update data succeeded !',
     });
   };
   deleteById = async (req: Request, res: Response): Promise<Response> => {
-    const { id: user_id } = req.app.locals.credential;
-    const { id } = req.params as { id: string };
-    const getTodoId = await db.todo.findOne({ where: { id, user_id } });
-    if (!getTodoId) {
+    const service: TodoService = new TodoService(req);
+    const getDataId = await service.getDataById();
+    if (!getDataId) {
       return res.status(404).send({ message: 'Data not found !' });
     } else {
-      await db.todo.destroy({ where: { id, user_id } });
+      await service.deleteDataById();
       return res.status(200).send({ message: 'Data successfully deleted !' });
     }
   };

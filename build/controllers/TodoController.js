@@ -8,39 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const db = require('../db/models');
+const TodoService_1 = __importDefault(require("../services/TodoService"));
 class TodoController {
     constructor() {
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.app.locals.credential;
-            const data = yield db.todo.findAll({
-                where: { user_id: id },
-                attributes: { exclude: ['userId'] },
-            });
+            const service = new TodoService_1.default(req);
+            const data = yield service.getAll();
             return res.status(200).send({
                 data,
             });
         });
         this.create = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.app.locals.credential;
-            const { description } = req.body;
-            const todo = yield db.todo.create({
-                user_id: id,
-                description,
-            });
+            const service = new TodoService_1.default(req);
+            const todo = yield service.createData();
             return res.status(201).send({
                 data: todo,
                 message: 'Create todo succeeded !',
             });
         });
         this.getById = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { id: user_id } = req.app.locals.credential;
-            const { id } = req.params;
-            const data = yield db.todo.findOne({
-                where: { id, user_id },
-                attributes: { exclude: ['userId'] },
-            });
+            const service = new TodoService_1.default(req);
+            const data = yield service.getDataById();
             if (!data) {
                 return res.status(404).send({
                     message: 'Todo not found !',
@@ -53,25 +46,22 @@ class TodoController {
             }
         });
         this.updateById = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { id: user_id } = req.app.locals.credential;
-            const { id } = req.params;
-            const { description } = req.body;
-            yield db.todo.update({ description }, { where: { id, user_id } });
-            const getDataUpdate = yield db.todo.findOne({ where: { id, user_id }, attributes: { exclude: ['userId'] } });
+            const service = new TodoService_1.default(req);
+            yield service.updateDataById();
+            const getDataUpdate = yield service.getDataById();
             return res.status(200).send({
                 data: getDataUpdate,
                 message: 'Update data succeeded !',
             });
         });
         this.deleteById = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { id: user_id } = req.app.locals.credential;
-            const { id } = req.params;
-            const getTodoId = yield db.todo.findOne({ where: { id, user_id } });
-            if (!getTodoId) {
+            const service = new TodoService_1.default(req);
+            const getDataId = yield service.getDataById();
+            if (!getDataId) {
                 return res.status(404).send({ message: 'Data not found !' });
             }
             else {
-                yield db.todo.destroy({ where: { id, user_id } });
+                yield service.deleteDataById();
                 return res.status(200).send({ message: 'Data successfully deleted !' });
             }
         });
