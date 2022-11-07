@@ -6,17 +6,14 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": false,
-    "outDir": "./build",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "allowJs": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "*": ["node_modules/*", "src/types/*"]
-    }
+    "resolveJsonModule": true
   },
-  "include": ["./src/**/*"],
-  "extends": "./tsconfig.paths.json",
-  "exclude": ["src/public"]
+  "include": ["./src"],
+  "extends": "./tsconfig.paths.json"
 }

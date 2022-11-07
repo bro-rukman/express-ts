@@ -4,9 +4,9 @@
   "description": "package for express backend",
   "main": "index.js",
   "scripts": {
-    "tsc": "rm -rf build/ && tsc",
-    "ts": "rm -rf build && tsc -w",
-    "dev": "nodemon ./build/index.js"
+    "start": "nodemon ./dist/index.js",
+    "dev": "nodemon ./src/index.ts",
+    "build": "npx tsc"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "@types/moment": "^2.13.0",
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.11.0",
+    "@types/pg": "^8.6.5",
     "@types/validator": "^13.7.9",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
@@ -49,6 +50,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mysql2": "^2.3.3",
+    "pg": "^8.8.0",
     "pg-promise": "^10.12.1",
     "sequelize": "^6.25.3",
     "sequelize-cli": "^6.5.2",

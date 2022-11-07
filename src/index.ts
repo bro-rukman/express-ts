@@ -8,6 +8,7 @@ import { config as dotenv } from 'dotenv';
 import UserRoutes from './routes/UserRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 import TodoRoutes from './routes/TodoRoutes';
+require('dotenv').config();
 
 class App {
   public app: Application;
@@ -23,6 +24,8 @@ class App {
     this.app.use(compression());
     this.app.use(cors());
     this.app.use(helmet());
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
   }
   protected routes(): void {
     this.app.route('/').get((req: Request, res: Response) => {
@@ -33,7 +36,7 @@ class App {
     this.app.use('/api/v1/todo', TodoRoutes);
   }
 }
-const port = 8000;
+const port = process.env.PORT;
 const app = new App().app;
 app.listen(port, () => {
   console.log('Server running in port ' + port);

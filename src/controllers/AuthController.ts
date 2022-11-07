@@ -1,16 +1,19 @@
 import { Request, Response } from 'express';
 const db = require('../db/models');
 import Authentication from '../utils/Authentication';
+import { pool } from '../datasources/postgres.datasource';
+import { QueryResult } from 'pg';
 
 class AuthController {
   register = async (req: Request, res: Response): Promise<Response> => {
-    let { username, password } = req.body;
+    let { username, region, password } = req.body;
     const passwordHashed: string = await Authentication.passwordHash(password);
-    await db.user.create({
+    const response: QueryResult = await pool.query(`INSERT INTO users(username,region,password) VALUES($1,$2,$3)`, [
       username,
-      password: passwordHashed,
-    });
-    return res.status(200).send('Created user succeeded !');
+      region,
+      passwordHashed,
+    ]);
+    return res.status(200).json({ message: 'Created user succeeded !' });
   };
   login = async (req: Request, res: Response): Promise<Response> => {
     const { username, password } = req.body;
