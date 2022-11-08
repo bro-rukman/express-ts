@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -8,6 +8,7 @@ import { config as dotenv } from 'dotenv';
 import UserRoutes from './routes/UserRoutes';
 import AuthRoutes from './routes/AuthRoutes';
 import TodoRoutes from './routes/TodoRoutes';
+import createError from 'http-errors';
 require('dotenv').config();
 
 class App {

@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-const db = require('../db/models');
 import { pool } from '../datasources/postgres.datasource';
 import { QueryResult } from 'pg';
+import Authentication from '../utils/Authentication';
+
 class UserController {
-  getAll = async (req: Request, res: Response): Promise<Response> => {
+  getAll = async (res: Response): Promise<Response> => {
     try {
       const response: QueryResult = await pool.query(`SELECT "id","username","region","password" FROM users`);
       return res.status(200).json(response.rows);
@@ -11,14 +12,6 @@ class UserController {
       return res.status(500).json('Internal Server Error');
     }
   };
-
-  // getAll = async (req: Request, res: Response): Promise<Response> => {
-  //   const allUser = await db.user.findAll({ attributes: { exclude: ['password'] } });
-  //   return res.status(200).send({
-  //     data: allUser,
-  //   });
-  // };
-
   getById = async (req: Request, res: Response): Promise<Response> => {
     const id = parseInt(req.params.id, 10);
     const response: QueryResult = await pool.query(
@@ -32,24 +25,32 @@ class UserController {
     }
   };
   updateById = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.app.locals.credential;
-    const { username, password } = req.body;
-    await db.user.update({ username, password }, { where: { id }, attributes: { exclude: ['password'] } });
-    const getDataUpdate = await db.user.findOne({ where: { id }, attributes: { exclude: ['password'] } });
-    return res.status(200).send({
-      data: getDataUpdate,
-      message: 'Success Update user !',
-    });
+    // const { id } = req.app.locals.credential;
+    const id = parseInt(req.params.id, 10);
+    const { username, region, password } = req.body;
+    const responseGetId: QueryResult = await pool.query(`SELECT * FROM users WHERE id=$1`, [id]);
+    if (responseGetId.rowCount !== 0) {
+      const passwordHashed: string = await Authentication.passwordHash(password);
+      await pool.query(`UPDATE users SET username=$1,region=$2,password=$3 WHERE id=$4`, [
+        username,
+        region,
+        passwordHashed,
+        id,
+      ]);
+      return res.status(200).json({ message: `User ${id} successfully updated !`, data: { id, username, region } });
+    } else {
+      return res.status(404).json({ message: 'User not found !' });
+    }
   };
 
   deleteById = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.params as { id: string };
-    const user = await db.user.findOne({ where: { id } });
-    if (!user) {
-      return res.status(404).send({ message: 'User not found !' });
+    const id = parseInt(req.params.id, 10);
+    const response: QueryResult = await pool.query(`DELETE FROM users WHERE id=$1`, [id]);
+    if (response.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found !' });
+    } else {
+      return res.status(200).json({ message: `User ${id} successfully deleted !` });
     }
-    await db.user.destroy({ where: { id } });
-    return res.status(200).send({ message: 'User successfully deleted !' });
   };
 }
 export default new UserController();
