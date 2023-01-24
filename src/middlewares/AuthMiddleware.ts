@@ -4,10 +4,10 @@ require('dotenv').config();
 
 export const auth = (req: Request, res: Response, next: NextFunction): any => {
   if (!req.headers.authorization) {
-    return res.status(401).send('Unauthenticated !');
+    return res.status(401).json({ message: 'Unauthenticated !' });
   }
 
-  let secretKey = process.env.JWT_SECRET_KEY || 'secret_key';
+  let secretKey = process.env.ACCESS_SECRET_KEY || 'keys_secrets_access';
   const token: string = req.headers.authorization.split(' ')[1];
 
   try {
@@ -17,6 +17,6 @@ export const auth = (req: Request, res: Response, next: NextFunction): any => {
       return next();
     }
   } catch (error) {
-    return res.send(error);
+    return res.status(403).json({ message: 'Invalid Token' });
   }
 };

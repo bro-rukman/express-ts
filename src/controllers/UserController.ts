@@ -2,11 +2,24 @@ import { Request, Response } from 'express';
 import { pool } from '../datasources/postgres.datasource';
 import { QueryResult } from 'pg';
 import Authentication from '../utils/Authentication';
+import _ from 'lodash';
 
 class UserController {
-  getAll = async (res: Response): Promise<Response> => {
+  getAll = async (req: Request, res: Response): Promise<Response> => {
     try {
       const response: QueryResult = await pool.query(`SELECT "id","username","region","password" FROM users`);
+      return res.status(200).json(response.rows);
+    } catch (error) {
+      return res.status(500).json('Internal Server Error');
+    }
+  };
+  getUserWithTodo = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const response: QueryResult = await pool.query(
+        `SELECT id,username,region,todo.todo_id,todo.title,todo.description FROM users LEFT JOIN todo ON todo.user_id=id WHERE todo.todo_id IS NOT NULL`
+      );
+      const groupByUser = _.groupBy(response.rows, 'id');
+      console.log(groupByUser);
       return res.status(200).json(response.rows);
     } catch (error) {
       return res.status(500).json('Internal Server Error');

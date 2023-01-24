@@ -5,6 +5,7 @@ import { auth } from '../middlewares/AuthMiddleware';
 class UserRouter extends BaseRouter {
   public routes(): void {
     this.router.get('/', UserController.getAll);
+    this.router.get('/todo', UserController.getUserWithTodo);
     this.router.get('/:id', UserController.getById);
     this.router.put('/update/:id', UserController.updateById);
     this.router.delete('/delete/:id', UserController.deleteById);

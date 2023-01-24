@@ -4,7 +4,7 @@ import Authentication from '../utils/Authentication';
 import { pool } from '../datasources/postgres.datasource';
 import { QueryResult } from 'pg';
 import createError from 'http-errors';
-import bcrypt from 'bcrypt';
+import bcrypt, { compare } from 'bcrypt';
 
 class AuthController {
   register = async (req: Request, res: Response): Promise<Response> => {
@@ -19,23 +19,28 @@ class AuthController {
         region,
         passwordHashed,
       ]);
-      return res.status(200).json({ message: 'Created user succeeded !', data: response.rows[0] });
+      return res.status(200).json({ message: 'Created user succeeded !', data: response.rows?.[0] });
     }
   };
   login = async (req: Request, res: Response): Promise<Response> => {
     const { username, password } = req.body;
-
-    const userFind = await db.user.findOne({ where: { username } });
-    let result = await Authentication.passwordCompare(password, userFind?.password);
-    if (result) {
-      let token = Authentication.generateToken(userFind.id, username, password);
-      return res.status(200).send({ username, token });
+    const users: QueryResult = await pool.query('SELECT * FROM users WHERE username=$1', [username]);
+    if (users.rows.length === 0) {
+      return res.status(401).json({ message: 'Username is incorrect !' });
+    } else {
+      const compares = await Authentication.passwordCompare(password, users.rows?.[0]?.password);
+      if (!compares) {
+        return res.status(401).json({ message: 'Incorrect password !' });
+      }
+      let token = Authentication.generateTokenAndRefresh(users.rows?.[0]?.id, username, users.rows?.[0]?.region);
+      res.cookie('refresh_token', token?.refreshToken, { httpOnly: true });
+      return res.status(200).send({ username, access_token: token?.accessToken, refresh_token: token?.refreshToken });
     }
-    return res.send('Wrong username or password !');
   };
 
   profile = (req: Request, res: Response): Response => {
-    return res.send(req.app.locals.credential);
+    const result = req.app.locals.credential;
+    return res.status(200).json({ id: result?.id, username: result?.username, region: result?.region });
   };
 }
 export default new AuthController();

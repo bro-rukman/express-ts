@@ -3,5 +3,6 @@ export default interface User {
   username: string;
   password: string;
   region: string;
-  rule: number;
+  created_at: Date;
+  updated_at: Date;
 }
